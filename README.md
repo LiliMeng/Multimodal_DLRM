@@ -1,6 +1,6 @@
 # Multimodal_DLRM
 
-To adapt the MovieLens 25M dataset into a multi-modal input for DLRM, you can integrate additional data modalities like movie posters (images) and plot summaries (text) along with the existing tabular data (e.g., user ratings, movie metadata). Below is an example of how you might structure the code to do this.
+To adapt the MovieLens 25M dataset into a multi-modal input for DLRM, we can integrate additional data modalities like movie posters (images) and plot summaries (text) along with the existing tabular data (e.g., user ratings, movie metadata). Below is an example of how you might structure the code to do this.
 
 ### Prerequisites
 Ensure you have the following libraries installed:
