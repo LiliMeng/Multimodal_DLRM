@@ -1,5 +1,45 @@
 # Multimodal_DLRM
 
+## DLRM
+
+The **Deep Learning Recommendation Model (DLRM)**, developed by Meta (formerly Facebook), is a high-performance neural network architecture designed for large-scale recommendation systems. It was introduced to address the unique challenges of recommendation tasks, which typically involve heterogeneous data types, large input sizes, and the need for real-time inference.
+
+### Key Components and Architecture of DLRM
+
+1. **Input Features**:
+   - **Sparse Features**: These are categorical features, like user IDs, item IDs, or other discrete attributes. DLRM uses embedding layers to convert these high-dimensional, sparse categorical features into dense vectors. This helps in reducing the dimensionality and capturing the semantics of the categorical data.
+   - **Dense Features**: These are continuous numerical features, such as user age, item price, or interaction counts. DLRM processes these features through fully connected layers.
+
+2. **Embedding Layers**:
+   - DLRM uses embedding tables to map sparse categorical features to dense representations. These embeddings are learned during training and are crucial for representing the categorical data efficiently.
+
+3. **Interaction Layer**:
+   - The interaction between different features is a critical aspect of DLRM. After transforming the sparse and dense inputs into their respective dense embeddings, DLRM computes interactions between these embeddings. The most common form of interaction in DLRM is the **dot product** between feature embeddings, capturing the pairwise interactions between different features.
+
+4. **Multi-Layer Perceptron (MLP)**:
+   - DLRM includes an MLP component that processes the interactions of features. This MLP is responsible for learning non-linear patterns and predicting the final output, such as a user's likelihood to click on an item or give a high rating.
+
+5. **Output**:
+   - The final output of DLRM is typically a probability score, representing the likelihood of a certain event (e.g., a user clicking on a recommended item).
+
+### Scalability and Efficiency
+
+- **Parallelism**: DLRM is designed to take advantage of parallelism, especially on GPU clusters, making it suitable for large-scale deployments. The model can handle billions of input features and make predictions in real-time, which is critical for serving recommendations to millions of users.
+  
+- **Distributed Training**: DLRM supports distributed training across multiple GPUs or machines. This is essential for handling the massive datasets typically involved in recommendation tasks.
+
+- **Memory Efficiency**: One of the challenges in recommendation systems is the large size of embedding tables, especially with billions of items. DLRM employs techniques like mixed precision training and quantization to reduce memory usage while maintaining performance.
+
+### Performance and Applications
+
+DLRM has been extensively used in production at Meta for various recommendation tasks, including personalized ads, content ranking, and social media feed optimization. Its architecture is flexible and can be adapted to different types of recommendation scenarios, from predicting user engagement to ranking search results.
+
+### Open Source and Research
+
+Meta has open-sourced DLRM through their [GitHub repository](https://github.com/facebookresearch/dlrm), allowing researchers and engineers to experiment with and extend the model. The open-source release includes code for training, evaluation, and deployment, making it a valuable resource for developing state-of-the-art recommendation systems.
+
+DLRM has had a significant impact on the field of recommendation systems, offering a scalable and efficient approach to handling the complexities of real-world recommendation tasks. Its introduction has spurred further research into deep learning-based recommendation models and has set a benchmark for performance in the industry.
+
 To adapt the MovieLens 25M dataset into a multi-modal input for DLRM, we can integrate additional data modalities like movie posters (images) and plot summaries (text) along with the existing tabular data (e.g., user ratings, movie metadata). Below is an example of how you might structure the code to do this.
 
 ### Prerequisites
