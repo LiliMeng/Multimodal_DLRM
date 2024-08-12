@@ -2,7 +2,7 @@
 
 ## DLRM
 
-The **Deep Learning Recommendation Model (DLRM)**, developed by Meta (formerly Facebook), is a high-performance neural network architecture designed for large-scale recommendation systems. It was introduced to address the unique challenges of recommendation tasks, which typically involve heterogeneous data types, large input sizes, and the need for real-time inference.
+The **Deep Learning Recommendation Model (DLRM)**, developed by Meta, is a high-performance neural network architecture designed for large-scale recommendation systems. It was introduced to address the unique challenges of recommendation tasks, which typically involve heterogeneous data types, large input sizes, and the need for real-time inference.
 
 ### Key Components and Architecture of DLRM
 
