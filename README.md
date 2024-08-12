@@ -411,3 +411,16 @@ You might also want to consider additional metrics depending on your task. For e
 - **Model Evaluation**: Finally, the model is evaluated, and the results are printed out.
 
 This code provides a framework to assess the performance of your DLRM model with CLIP embeddings, giving you insights into how well the model is predicting ratings based on multi-modal inputs.
+
+## Baselines:
+The state-of-the-art (SOTA) models for the MovieLens 25M dataset primarily focus on recommendation tasks, particularly link prediction and collaborative filtering. As of the latest results:
+
+1. **PEAGAT (Personalized Embedding Attention Graph Autoencoder Transformer)** is currently the SOTA model for link prediction tasks on the MovieLens 25M dataset. This model achieves the best performance by integrating graph-based embeddings with attention mechanisms and transformers, effectively capturing user-item interactions and complex relationships in the data.
+
+2. **LightGT (Light Graph Transformer)** is another leading model that has shown excellent results for multi-media recommendations on the same dataset. It combines graph neural networks (GNNs) and transformers to handle graph-structured data, which is particularly effective for tasks involving collaborative filtering and recommendations.
+
+These models are part of the broader trend in recommendation systems that leverage advanced architectures like transformers and graph neural networks to capture more intricate patterns in user-item interactions. 
+
+The performance of these models is typically evaluated using metrics such as Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE), among others, depending on the specific task and benchmark.
+
+You can explore more detailed results and model comparisons on platforms like Papers With Code, which tracks SOTA models across various datasets, including MovieLens 25M (https://paperswithcode.com/sota/link-prediction-on-movielens-25m).
