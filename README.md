@@ -186,3 +186,152 @@ for epoch in range(10):
 
 ### Summary
 This code integrates movie posters and plot summaries with the MovieLens 25M dataset, processes them through DLRM, and trains the model on these multi-modal inputs. Depending on your specific needs, you might adjust the architecture and preprocessing steps.
+
+## Multimodal_DLRM with CLIP
+
+Integrating the above multi-modal MovieLens code with a model like CLIP (Contrastive Language-Image Pre-training) involves leveraging CLIP's ability to encode both images and text into a shared latent space. This can be done by using CLIP to process the movie posters (images) and plot summaries (text) and then feeding the resulting embeddings into the DLRM model.
+
+### Prerequisites
+Ensure you have the `CLIP` model from OpenAI installed:
+
+```bash
+pip install git+https://github.com/openai/CLIP.git
+```
+
+### Updated Implementation
+
+#### 1. **Load and Preprocess Data with CLIP**
+
+```python
+import torch
+import clip
+from PIL import Image
+
+# Load the CLIP model and preprocess function
+device = "cuda" if torch.cuda.is_available() else "cpu"
+model, preprocess = clip.load("ViT-B/32", device=device)
+
+# Preprocess function for images using CLIP
+def preprocess_image(image_path):
+    image = Image.open(image_path).convert("RGB")
+    return preprocess(image).unsqueeze(0).to(device)
+
+# Function to tokenize text using CLIP
+def preprocess_text(text):
+    return clip.tokenize([text]).to(device)
+
+# Function to get CLIP embeddings
+def get_clip_embeddings(movie_id):
+    # Load and preprocess the image
+    image_path = posters.loc[posters['movieId'] == movie_id, 'poster_path'].values[0]
+    image_tensor = preprocess_image(image_path)
+    
+    # Load and preprocess the text
+    summary = summaries.loc[summaries['movieId'] == movie_id, 'summary'].values[0]
+    text_tensor = preprocess_text(summary)
+    
+    # Get the CLIP embeddings
+    with torch.no_grad():
+        image_features = model.encode_image(image_tensor).squeeze(0)
+        text_features = model.encode_text(text_tensor).squeeze(0)
+    
+    return image_features, text_features
+```
+
+#### 2. **Modify the DLRM Model to Use CLIP Embeddings**
+
+Since CLIP embeddings are already in a shared latent space, we can directly use these embeddings in the DLRM model.
+
+```python
+class DLRM_CLIP(nn.Module):
+    def __init__(self, input_size, output_size=1):
+        super(DLRM_CLIP, self).__init__()
+        # DLRM components for tabular data
+        self.mlp_dense = nn.Sequential(
+            nn.Linear(input_size, 128),
+            nn.ReLU(),
+            nn.Linear(128, 64),
+            nn.ReLU()
+        )
+        
+        # Final prediction layer after combining CLIP embeddings with dense features
+        self.interaction = nn.Linear(64 + 512 + 512, 128)  # Adjust for CLIP's output size
+        self.prediction = nn.Linear(128, output_size)
+
+    def forward(self, dense_features, image_features, text_features):
+        # Process dense features
+        dense_out = self.mlp_dense(dense_features)
+        
+        # Concatenate dense features with CLIP embeddings
+        combined = torch.cat([dense_out, image_features, text_features], dim=1)
+        
+        # Interaction and prediction
+        interaction_out = self.interaction(combined)
+        output = self.prediction(interaction_out)
+        return output
+```
+
+#### 3. **Update the DataLoader to Use CLIP**
+
+```python
+class MovieLensCLIPDataset(Dataset):
+    def __init__(self, ratings, posters, summaries):
+        self.ratings = ratings
+        self.posters = posters
+        self.summaries = summaries
+
+    def __len__(self):
+        return len(self.ratings)
+
+    def __getitem__(self, idx):
+        rating_data = self.ratings.iloc[idx]
+        movie_id = rating_data['movieId']
+        
+        # Get tabular data (e.g., user and movie IDs)
+        user_id = rating_data['userId']
+        movie_id = rating_data['movieId']
+        rating = torch.tensor(rating_data['rating'], dtype=torch.float32)
+
+        # Get CLIP-based multi-modal features
+        image_features, text_features = get_clip_embeddings(movie_id)
+        
+        # Dense features can be user/movie IDs or other numerical data
+        dense_features = torch.tensor([user_id, movie_id], dtype=torch.float32).to(device)
+
+        return dense_features, image_features, text_features, rating
+
+# Instantiate dataset and dataloader
+dataset = MovieLensCLIPDataset(ratings, posters, summaries)
+dataloader = DataLoader(dataset, batch_size=32, shuffle=True)
+```
+
+#### 4. **Train the DLRM Model with CLIP**
+
+```python
+# Instantiate the model
+model = DLRM_CLIP(input_size=2).to(device)  # Adjust for the input size (user_id, movie_id)
+criterion = nn.MSELoss()
+optimizer = optim.Adam(model.parameters(), lr=0.001)
+
+# Training loop
+for epoch in range(10):
+    model.train()
+    total_loss = 0
+    for dense_features, image_features, text_features, rating in dataloader:
+        optimizer.zero_grad()
+        
+        # Forward pass
+        output = model(dense_features, image_features, text_features)
+        loss = criterion(output.squeeze(), rating)
+        
+        # Backward pass and optimization
+        loss.backward()
+        optimizer.step()
+        
+        total_loss += loss.item()
+    
+    print(f'Epoch {epoch + 1}, Loss: {total_loss / len(dataloader)}')
+```
+
+### Summary
+In this approach, the CLIP model processes both movie posters and plot summaries, generating embeddings that are then fed into a modified DLRM model along with tabular data. This integration leverages CLIP's ability to encode images and text into a shared latent space, which can improve the performance of recommendation tasks that involve multi-modal data.
