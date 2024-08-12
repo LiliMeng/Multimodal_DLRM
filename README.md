@@ -335,3 +335,79 @@ for epoch in range(10):
 
 ### Summary
 In this approach, the CLIP model processes both movie posters and plot summaries, generating embeddings that are then fed into a modified DLRM model along with tabular data. This integration leverages CLIP's ability to encode images and text into a shared latent space, which can improve the performance of recommendation tasks that involve multi-modal data.
+
+## Evalution code
+To evaluate the DLRM model with CLIP embeddings on the MovieLens 25M dataset, you can follow these steps to calculate metrics such as Mean Squared Error (MSE) and potentially other recommendation metrics like Mean Absolute Error (MAE) or Root Mean Squared Error (RMSE). Here’s how you can structure the evaluation code:
+
+### Evaluation Code
+
+#### 1. **Prepare the Dataset for Evaluation**
+You should split your dataset into training and test sets. Here, we assume you have already split the dataset and are focusing on evaluating the model on the test set.
+
+```python
+from sklearn.model_selection import train_test_split
+from torch.utils.data import DataLoader, Subset
+
+# Split the dataset into train and test
+train_indices, test_indices = train_test_split(range(len(ratings)), test_size=0.2, random_state=42)
+
+# Create DataLoader for test set
+test_dataset = Subset(MovieLensCLIPDataset(ratings, posters, summaries), test_indices)
+test_dataloader = DataLoader(test_dataset, batch_size=32, shuffle=False)
+```
+
+#### 2. **Evaluation Function**
+
+This function will compute the predictions on the test set and calculate evaluation metrics.
+
+```python
+def evaluate_model(model, dataloader, criterion):
+    model.eval()
+    total_loss = 0
+    all_predictions = []
+    all_targets = []
+
+    with torch.no_grad():
+        for dense_features, image_features, text_features, rating in dataloader:
+            # Forward pass
+            output = model(dense_features, image_features, text_features).squeeze()
+            loss = criterion(output, rating)
+            
+            total_loss += loss.item()
+            
+            all_predictions.extend(output.cpu().numpy())
+            all_targets.extend(rating.cpu().numpy())
+    
+    # Calculate Mean Squared Error
+    mse = total_loss / len(dataloader)
+    
+    # Convert lists to numpy arrays for further metric calculations
+    predictions = np.array(all_predictions)
+    targets = np.array(all_targets)
+    
+    # Calculate additional metrics
+    mae = np.mean(np.abs(predictions - targets))
+    rmse = np.sqrt(mse)
+    
+    return mse, mae, rmse
+
+# Instantiate loss function (Mean Squared Error)
+criterion = nn.MSELoss()
+
+# Evaluate the model on the test set
+mse, mae, rmse = evaluate_model(model, test_dataloader, criterion)
+
+print(f"Test MSE: {mse}")
+print(f"Test MAE: {mae}")
+print(f"Test RMSE: {rmse}")
+```
+
+#### 3. **Additional Evaluation Metrics (Optional)**
+You might also want to consider additional metrics depending on your task. For example, if your model is used in a recommendation system, you might evaluate metrics such as Precision, Recall, or Normalized Discounted Cumulative Gain (NDCG). However, for this regression task, the above metrics should suffice.
+
+### Summary of Evaluation Code
+- **Test DataLoader**: The test dataset is loaded into a DataLoader without shuffling to ensure consistent evaluation.
+- **Evaluation Function**: The function computes the MSE, MAE, and RMSE, which are common metrics for evaluating regression models.
+- **Model Evaluation**: Finally, the model is evaluated, and the results are printed out.
+
+This code provides a framework to assess the performance of your DLRM model with CLIP embeddings, giving you insights into how well the model is predicting ratings based on multi-modal inputs.
