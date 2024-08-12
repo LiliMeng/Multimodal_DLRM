@@ -525,3 +525,44 @@ These models are part of the broader trend in recommendation systems that levera
 The performance of these models is typically evaluated using metrics such as Mean Squared Error (MSE), Root Mean Squared Error (RMSE), and Mean Absolute Error (MAE), among others, depending on the specific task and benchmark.
 
 You can explore more detailed results and model comparisons on platforms like Papers With Code, which tracks SOTA models across various datasets, including MovieLens 25M (https://paperswithcode.com/sota/link-prediction-on-movielens-25m).
+
+## Dataset details:
+The MovieLens 25M dataset is one of the largest and most popular datasets used in research related to recommendation systems, particularly for collaborative filtering techniques. Released by GroupLens, a research lab at the University of Minnesota, the dataset provides an extensive collection of user ratings for movies, along with additional metadata.
+
+### Key Features of the MovieLens 25M Dataset
+
+1. **Size and Scope**:
+   - The dataset contains **25 million ratings** on a 5-star scale, spanning from **0.5 to 5 stars**, with increments of 0.5 stars.
+   - It includes ratings provided by **162,541 unique users** across **62,423 movies**.
+   - The ratings were collected between **January 9, 1995**, and **November 21, 2019**.
+
+2. **Data Composition**:
+   - **Ratings Data**: The core of the dataset is the ratings data, where each record represents a rating given by a user to a movie. This is stored in a CSV file with columns for user ID, movie ID, rating, and timestamp (indicating when the rating was given).
+   - **Movies Data**: Each movie is associated with metadata, including title, genres, and possibly a release year. This information is useful for content-based filtering or hybrid recommendation approaches.
+   - **Tags and Tag Applications**: Users can also tag movies with specific labels, which can be used for analyzing user preferences or enhancing recommendation models with contextual information.
+   - **Links Data**: Provides connections between the MovieLens IDs and corresponding IDs from IMDb and TMDb (The Movie Database), allowing for enrichment of the dataset with additional external data such as cast, crew, plot summaries, and posters.
+
+3. **Genres**:
+   - The movies are classified into one or more of 20 different genres, such as Action, Comedy, Drama, and Sci-Fi. These genres are useful for both collaborative filtering and content-based recommendations.
+
+4. **User Data**:
+   - The dataset does not contain explicit user profiles or demographic data but focuses on the behavioral aspect—primarily the ratings and tags provided by users. The absence of demographic data helps maintain user privacy.
+
+5. **Applications**:
+   - **Collaborative Filtering**: The dataset is widely used to develop and test collaborative filtering algorithms, which predict a user’s preference based on the preferences of similar users.
+   - **Content-Based Filtering**: The movie metadata, including genres and tags, supports content-based recommendation methods, where movies similar to what the user liked before are recommended.
+   - **Hybrid Models**: Combining collaborative filtering with content-based methods, the MovieLens 25M dataset is also used for developing hybrid recommendation systems that leverage both user interaction and movie content.
+
+6. **Challenges and Research**:
+   - The dataset poses several challenges, such as sparsity (many movies have only a few ratings), scalability (due to the large number of users and movies), and the cold-start problem (new users or movies with few ratings). These challenges make it a valuable resource for benchmarking the performance of new recommendation algorithms.
+
+7. **Variants**:
+   - **MovieLens 1M, 10M, and 20M**: Smaller versions of the dataset are also available, such as MovieLens 1M, 10M, and 20M, which are subsets of the full dataset and are often used in studies where computational resources are limited.
+
+### Research Use and Impact
+The MovieLens 25M dataset has been cited in numerous academic papers and has become a standard benchmark in the field of recommendation systems. Its extensive use in the development and testing of recommendation algorithms, especially those based on collaborative filtering, has helped drive advancements in this field. Moreover, the dataset's versatility allows researchers to explore various aspects of recommendation systems, including implicit feedback, temporal dynamics, and explainability.
+
+### Data Access
+The MovieLens 25M dataset is freely available for academic and non-commercial use and can be downloaded from the GroupLens website [here](https://grouplens.org/datasets/movielens/25m/).
+
+This dataset continues to be a critical tool for researchers and developers aiming to improve the quality and personalization of recommendation systems.
