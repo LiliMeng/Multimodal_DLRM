@@ -1,5 +1,59 @@
 # Multimodal_DLRM
 
+## Formulate DLRM and MovieLens Recommendation as a regression problem
+When using DLRM (Deep Learning Recommendation Model) on the MovieLens 25M dataset as a multimodal recommendation system, the problem is typically framed as a **regression problem**. The task is to predict the exact rating (a continuous value) that a user will give to a movie, rather than simply classifying whether they will like the movie or not.
+
+### Loss Function for DLRM on MovieLens 25M
+
+The most commonly used loss function for this setup is the **Mean Squared Error (MSE)**. MSE is suitable for regression tasks where the goal is to minimize the difference between the predicted ratings and the actual ratings provided by users.
+
+The MSE loss is calculated as:
+
+\[
+\text{MSE} = \frac{1}{N} \sum_{i=1}^{N} (\hat{y}_i - y_i)^2
+\]
+
+Where:
+- \( \hat{y}_i \) is the predicted rating for the \(i\)-th user-item pair.
+- \( y_i \) is the actual rating for the \(i\)-th user-item pair.
+- \( N \) is the total number of user-item pairs in the dataset.
+
+### Step-by-Step Explanation of the Recommendation System
+
+#### 1. **Data Preparation**
+   - **Input Data**: The MovieLens 25M dataset includes user ratings for movies, as well as metadata such as movie genres, user IDs, and movie IDs. In a multimodal setup, you might also incorporate additional data such as movie posters (images) and plot summaries (text).
+   - **Feature Engineering**: 
+     - **Sparse Features**: User IDs, movie IDs, and categorical data like genres are treated as sparse features.
+     - **Dense Features**: Ratings and possibly other numerical data are treated as dense features.
+     - **Multimodal Features**: Images and text are transformed into dense vectors using models like CLIP (for images and text) or ResNet (for images) and BERT (for text).
+
+#### 2. **Embedding Layers**
+   - **Sparse Features**: Categorical features are mapped to dense vectors using embedding layers. For example, user IDs and movie IDs are converted to dense vectors that capture their latent characteristics.
+   - **Multimodal Embeddings**: Image and text embeddings are generated using pre-trained models like CLIP and then fed into the DLRM model as dense vectors.
+
+#### 3. **Interaction Layer**
+   - The interaction between the different feature embeddings (sparse, dense, and multimodal) is computed. In DLRM, this typically involves calculating dot products between pairs of feature vectors to capture their pairwise interactions.
+
+#### 4. **Multi-Layer Perceptron (MLP)**
+   - The combined features from the interaction layer are passed through a Multi-Layer Perceptron (MLP). The MLP consists of several fully connected layers that learn complex patterns in the data and help predict the final output.
+
+#### 5. **Output Layer**
+   - The output layer generates a predicted rating for each user-movie pair. Since this is a regression problem, the output is a continuous value that represents the predicted rating.
+
+#### 6. **Loss Calculation**
+   - The predicted ratings are compared to the actual ratings using the Mean Squared Error (MSE) loss function. The model is trained to minimize this loss by adjusting the weights through backpropagation and optimization techniques (e.g., using the Adam optimizer).
+
+#### 7. **Evaluation**
+   - After training, the model's performance is typically evaluated using metrics such as MSE, RMSE (Root Mean Squared Error), MAE (Mean Absolute Error), and nDCG@10 (Normalized Discounted Cumulative Gain at rank 10) to assess how well the model ranks the items.
+
+### Classification vs. Regression in Recommendation Systems
+
+- **Regression**: As in the case of MovieLens 25M, if the task involves predicting a continuous value like a rating, it is a regression problem. The model needs to output a score or a real-valued number.
+  
+- **Classification**: If the task involves predicting whether a user will like or dislike a movie (e.g., predicting a binary outcome like "click" or "not click"), it would be a classification problem. In such cases, the loss function might be binary cross-entropy or categorical cross-entropy.
+
+**In summary**, when using DLRM on the MovieLens 25M dataset as a multimodal recommendation system, the problem is framed as a regression task, and the MSE loss function is used to train the model. The system predicts the exact rating a user is likely to give to a movie, leveraging both user interaction data and multimodal content features.
+
 ## DLRM
 
 The **Deep Learning Recommendation Model (DLRM)**, developed by Meta, is a high-performance neural network architecture designed for large-scale recommendation systems. It was introduced to address the unique challenges of recommendation tasks, which typically involve heterogeneous data types, large input sizes, and the need for real-time inference.
