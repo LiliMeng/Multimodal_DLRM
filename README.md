@@ -47,6 +47,7 @@ The most commonly used loss function for this setup is the **Mean Squared Error 
 **In summary**, when using DLRM on the MovieLens 25M dataset as a multimodal recommendation system, the problem is framed as a regression task, and the MSE loss function is used to train the model. The system predicts the exact rating a user is likely to give to a movie, leveraging both user interaction data and multimodal content features.
 
 ## DLRM
+https://arxiv.org/pdf/1906.00091
 
 The **Deep Learning Recommendation Model (DLRM)**, developed by Meta, is a high-performance neural network architecture designed for large-scale recommendation systems. It was introduced to address the unique challenges of recommendation tasks, which typically involve heterogeneous data types, large input sizes, and the need for real-time inference.
 
