@@ -1,9 +1,6 @@
 # Multimodal_DLRM
 
-## Formulate DLRM and MovieLens Recommendation as a regression problem
-When using DLRM (Deep Learning Recommendation Model) on the MovieLens 25M dataset as a multimodal recommendation system, the problem is typically framed as a **regression problem**. The task is to predict the exact rating (a continuous value) that a user will give to a movie, rather than simply classifying whether they will like the movie or not.
-
-### Loss Function for DLRM on MovieLens 25M
+## Dataset 
 
 MovieLens100K (a smaller version of MovieLens 25M): https://github.com/babu-thomas/movielens-posters 
 
@@ -12,6 +9,11 @@ https://janineb.medium.com/movie-recommendation-system-d6aa8583cdb
 Google Colab data anaysis https://colab.research.google.com/github/rposhala/Recommender-System-on-MovieLens-dataset/blob/main/Item_based_Collaborative_Recommender_System_using_KNN.ipynb#scrollTo=nhty6LqMur17
 
 Google Colab LightGCN baseline: https://colab.research.google.com/github/Weimw/movielens-project/blob/main/CS224w_project.ipynb?source=post_page-----37da71f405a4--------------------------------#scrollTo=lxoenua1-u5r
+
+## Formulate DLRM and MovieLens Recommendation as a regression problem
+When using DLRM (Deep Learning Recommendation Model) on the MovieLens 25M dataset as a multimodal recommendation system, the problem is typically framed as a **regression problem**. The task is to predict the exact rating (a continuous value) that a user will give to a movie, rather than simply classifying whether they will like the movie or not.
+
+### Loss Function for DLRM on MovieLens 25M
 
 The most commonly used loss function for this setup is the **Mean Squared Error (MSE)**. MSE is suitable for regression tasks where the goal is to minimize the difference between the predicted ratings and the actual ratings provided by users.
 
