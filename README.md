@@ -5,6 +5,8 @@ When using DLRM (Deep Learning Recommendation Model) on the MovieLens 25M datase
 
 ### Loss Function for DLRM on MovieLens 25M
 
+MovieLens100K (a smaller version of MovieLens 25M): https://github.com/babu-thomas/movielens-posters 
+
 The most commonly used loss function for this setup is the **Mean Squared Error (MSE)**. MSE is suitable for regression tasks where the goal is to minimize the difference between the predicted ratings and the actual ratings provided by users.
 
 <img width="558" alt="Screenshot 2024-08-13 at 9 55 56 AM" src="https://github.com/user-attachments/assets/5791d267-9936-446f-aafd-7310e7903f86">
