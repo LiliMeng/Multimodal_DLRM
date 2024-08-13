@@ -7,16 +7,8 @@ When using DLRM (Deep Learning Recommendation Model) on the MovieLens 25M datase
 
 The most commonly used loss function for this setup is the **Mean Squared Error (MSE)**. MSE is suitable for regression tasks where the goal is to minimize the difference between the predicted ratings and the actual ratings provided by users.
 
-The MSE loss is calculated as:
+<img width="558" alt="Screenshot 2024-08-13 at 9 55 56 AM" src="https://github.com/user-attachments/assets/5791d267-9936-446f-aafd-7310e7903f86">
 
-\[
-\text{MSE} = \frac{1}{N} \sum_{i=1}^{N} (\hat{y}_i - y_i)^2
-\]
-
-Where:
-- \( \hat{y}_i \) is the predicted rating for the \(i\)-th user-item pair.
-- \( y_i \) is the actual rating for the \(i\)-th user-item pair.
-- \( N \) is the total number of user-item pairs in the dataset.
 
 ### Step-by-Step Explanation of the Recommendation System
 
