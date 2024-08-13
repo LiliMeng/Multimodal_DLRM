@@ -500,6 +500,76 @@ This code provides a framework to assess the performance of your DLRM model with
 
 ## Additional evaluation with nDCG@10
 
+When using the Mean Squared Error (MSE) as the loss function during training in a recommendation system, you can still use the nDCG (Normalized Discounted Cumulative Gain) as an evaluation metric to measure how well your model ranks the items for users. Here's how you can integrate nDCG as an evaluation metric alongside MSE as the loss function:
+
+### 1. **Training with MSE Loss Function**
+   - During the training phase, you minimize the MSE loss. MSE measures the average squared difference between the predicted and actual ratings. This helps the model to predict ratings as accurately as possible.
+
+### 2. **Evaluating with nDCG Metric**
+   - **nDCG@k** is a ranking-based evaluation metric that measures the quality of the top-k recommendations. It takes into account both the position of relevant items in the ranking and the actual relevance (e.g., rating) of those items. Unlike MSE, which evaluates prediction accuracy, nDCG evaluates how well the model ranks the items.
+
+#### Steps to Calculate nDCG:
+
+1. **Prediction**:
+   - After training the model with MSE, for each user in the test set, predict scores for all possible items (movies).
+
+2. **Ranking**:
+   - Rank these items based on the predicted scores. For example, for nDCG@10, you would take the top 10 items with the highest predicted scores for each user.
+
+3. **Relevance Scores**:
+   - The true relevance scores are typically derived from the actual ratings in the test set. The relevance can be binary (e.g., relevant or not) or multi-level (e.g., the actual rating value).
+
+4. **Compute DCG@k**:
+   - Discounted Cumulative Gain (DCG) at position \( k \) is calculated as:
+     \[
+     \text{DCG@k} = \sum_{i=1}^{k} \frac{\text{relevance}_i}{\log_2(i + 1)}
+     \]
+     where \( \text{relevance}_i \) is the relevance score of the item at position \( i \) in the ranked list.
+
+5. **Compute IDCG@k**:
+   - Ideal DCG (IDCG) is computed by sorting items by their true relevance scores and then computing the DCG for this ideal ranking.
+
+6. **Compute nDCG@k**:
+   - The nDCG@k is calculated as:
+     \[
+     \text{nDCG@k} = \frac{\text{DCG@k}}{\text{IDCG@k}}
+     \]
+     This value ranges from 0 to 1, where 1 indicates a perfect ranking.
+
+### Example Implementation in Code
+
+Assuming you have the predicted scores and the true ratings, here's how you can calculate nDCG@10 in Python:
+
+```python
+from sklearn.metrics import ndcg_score
+
+def calculate_ndcg(y_true, y_pred, k=10):
+    """
+    Calculate the nDCG score at k.
+    
+    y_true: list of true relevance scores
+    y_pred: list of predicted scores
+    k: the cutoff rank
+    """
+    return ndcg_score([y_true], [y_pred], k=k)
+
+# Example data for one user
+true_ratings = [5, 4, 3, 2, 1]  # True ratings for all items
+predicted_scores = [0.8, 0.3, 0.7, 0.2, 0.5]  # Model predicted scores
+
+# Calculate nDCG@10
+ndcg_value = calculate_ndcg(true_ratings, predicted_scores, k=10)
+print(f"nDCG@10: {ndcg_value}")
+```
+
+### Summary
+- **Training**: Use MSE during training to optimize the prediction accuracy.
+- **Evaluation**: Use nDCG@k to evaluate how well the model ranks items in the top-k recommendations.
+
+This approach allows you to optimize for prediction accuracy while still ensuring that the model produces useful and relevant rankings for users, which is critical in recommendation systems.
+
+## Additional nDCG@10 metrics
+
 To evaluate the DLRM model with CLIP embeddings using the nDCG@10 (Normalized Discounted Cumulative Gain at rank 10) metric, you can implement the following code. This metric is widely used in recommendation systems to measure the quality of the ranking produced by the model.
 
 ### Prerequisites
