@@ -733,3 +733,193 @@ The MovieLens 25M dataset has been cited in numerous academic papers and has bec
 The MovieLens 25M dataset is freely available for academic and non-commercial use and can be downloaded from the GroupLens website [here](https://grouplens.org/datasets/movielens/25m/).
 
 This dataset continues to be a critical tool for researchers and developers aiming to improve the quality and personalization of recommendation systems.
+
+## MovieLens100K dataset
+
+### Overview of the MovieLens 100K Dataset
+
+The MovieLens 100K dataset is a well-known benchmark dataset widely used in the field of recommendation systems, particularly for collaborative filtering and matrix factorization techniques. It was released by the GroupLens Research Project at the University of Minnesota and contains 100,000 ratings from 943 users on 1,682 movies.
+
+#### Key Features of the Dataset
+
+1. **User-Item Interactions**:
+   - The dataset contains **100,000 ratings** (ranging from 1 to 5 stars) that users have given to movies. Each user has rated at least 20 movies, providing a rich set of interactions to work with.
+
+2. **Movies**:
+   - There are **1,682 unique movies** in the dataset, each identified by a movie ID. Movies are also categorized by genres (e.g., Action, Comedy, Drama), which can be used for content-based filtering and hybrid recommendation methods.
+
+3. **Users**:
+   - The dataset includes **943 unique users**. Each user is identified by a user ID and has rated multiple movies, with each user rating at least 20 movies. The dataset also provides demographic information such as age, gender, occupation, and ZIP code.
+
+4. **Timestamps**:
+   - Ratings are accompanied by timestamps, indicating when the rating was made. This information can be used to model temporal patterns in user behavior.
+
+5. **Movie Metadata**:
+   - Each movie is associated with metadata, including title, release date, and genres. This information is crucial for content-based recommendation approaches.
+
+6. **Files in the Dataset**:
+   - **u.data**: The main file containing the user-item interactions (ratings).
+   - **u.item**: Contains movie metadata like titles and genres.
+   - **u.user**: Contains user demographic information.
+   - **u.genre**: Lists the genres available in the dataset.
+
+### Analysis of the MovieLens 100K Dataset
+
+#### 1. **Exploratory Data Analysis (EDA)**
+
+Before building a recommendation model, it's essential to conduct exploratory data analysis to understand the distribution of ratings, user behavior, and item popularity.
+
+- **Rating Distribution**: Analyze how ratings are distributed across the dataset. Typically, you would observe a histogram to see the frequency of each rating (1-5 stars). This can reveal biases in user ratings, such as a tendency to rate movies more positively.
+  
+- **User Behavior**: Investigate how many movies users rate on average and whether there are users who rate a large number of movies versus those who rate only a few. This can help in identifying power users and sparse users.
+
+- **Movie Popularity**: Check the distribution of ratings per movie. Some movies may have received many ratings, while others may have only a few. Popularity bias is common, where a small number of popular movies dominate the ratings.
+
+- **Genre Analysis**: Use the genre information to analyze which genres are most popular. This can help in understanding the preferences of the user base.
+
+#### 2. **Collaborative Filtering**
+
+One of the main uses of the MovieLens 100K dataset is in collaborative filtering, where the goal is to predict a user's rating for an item (movie) based on past ratings of similar users or items. This can be implemented using methods like:
+
+- **User-User Collaborative Filtering**: Finds similar users based on their ratings and suggests movies that those users liked.
+  
+- **Item-Item Collaborative Filtering**: Finds similar movies based on user ratings and recommends those that are similar to movies the user has liked.
+
+#### 3. **Matrix Factorization**
+
+Matrix factorization is another common technique used on the MovieLens 100K dataset. This approach decomposes the user-item rating matrix into two lower-dimensional matrices: one representing users and the other representing items. The dot product of these matrices predicts the missing entries (ratings).
+
+- **Singular Value Decomposition (SVD)**: A popular matrix factorization technique that can be used to reduce the dimensionality of the user-item matrix and uncover latent features that represent users and movies.
+
+- **Stochastic Gradient Descent (SGD)**: Often used to optimize the factorization by iteratively adjusting the user and item matrices to minimize the prediction error.
+
+#### 4. **Temporal Dynamics**
+
+The timestamp data allows for the modeling of temporal dynamics, where you can analyze how user preferences evolve over time. This can be particularly useful for understanding trends in movie ratings and for building time-aware recommendation models.
+
+- **Time-based Splitting**: You can split the data based on time (e.g., train on early data, test on later data) to evaluate how well your model adapts to changes in user preferences over time.
+
+#### 5. **Hybrid Models**
+
+By combining collaborative filtering with content-based approaches (using the movie metadata), you can build hybrid models that leverage both the user-item interaction data and the content attributes of movies. This can improve recommendation accuracy, especially for new or less-rated movies.
+
+### Summary
+
+The MovieLens 100K dataset is a foundational dataset for research in recommendation systems. It offers a balanced mix of user ratings, demographic information, and movie metadata, making it suitable for various recommendation approaches. Analysis of the dataset typically involves understanding rating distributions, user and item behavior, and implementing collaborative filtering or matrix factorization techniques. The dataset's small size and simplicity make it an excellent starting point for learning and experimentation in recommendation systems.
+
+## Matrix Factorization baseline
+Matrix factorization is a popular technique used in recommendation systems to predict missing entries in a user-item matrix. Below is an example of how you can implement a matrix factorization method using stochastic gradient descent (SGD) on the MovieLens 100K dataset.
+
+### 1. **Install Required Libraries**
+First, make sure you have the necessary Python libraries installed:
+
+```bash
+pip install numpy pandas
+```
+
+### 2. **Load the MovieLens 100K Dataset**
+
+```python
+import pandas as pd
+import numpy as np
+
+# Load the MovieLens 100K dataset
+url = 'https://files.grouplens.org/datasets/movielens/ml-100k/u.data'
+column_names = ['user_id', 'item_id', 'rating', 'timestamp']
+df = pd.read_csv(url, sep='\t', names=column_names)
+
+# Drop the timestamp column as it's not needed for the matrix factorization
+df = df.drop(columns=['timestamp'])
+```
+
+### 3. **Create the User-Item Matrix**
+
+```python
+num_users = df['user_id'].nunique()
+num_items = df['item_id'].nunique()
+
+# Create the user-item matrix
+user_item_matrix = np.zeros((num_users, num_items))
+
+for line in df.itertuples():
+    user_item_matrix[line[1]-1, line[2]-1] = line[3]
+```
+
+### 4. **Matrix Factorization Function using SGD**
+
+```python
+def matrix_factorization(R, P, Q, K, steps=5000, alpha=0.0002, beta=0.02):
+    """
+    Perform matrix factorization using stochastic gradient descent.
+    
+    R: User-item rating matrix
+    P: User-feature matrix
+    Q: Item-feature matrix
+    K: Number of latent features
+    steps: Number of iterations
+    alpha: Learning rate
+    beta: Regularization parameter
+    """
+    Q = Q.T
+    for step in range(steps):
+        for i in range(len(R)):
+            for j in range(len(R[i])):
+                if R[i][j] > 0:
+                    eij = R[i][j] - np.dot(P[i,:], Q[:,j])
+                    for k in range(K):
+                        P[i][k] = P[i][k] + alpha * (2 * eij * Q[k][j] - beta * P[i][k])
+                        Q[k][j] = Q[k][j] + alpha * (2 * eij * P[i][k] - beta * Q[k][j])
+        eR = np.dot(P, Q)
+        e = 0
+        for i in range(len(R)):
+            for j in range(len(R[i])):
+                if R[i][j] > 0:
+                    e = e + pow(R[i][j] - np.dot(P[i,:], Q[:,j]), 2)
+                    for k in range(K):
+                        e = e + (beta/2) * (pow(P[i][k], 2) + pow(Q[k][j], 2))
+        if e < 0.001:
+            break
+    return P, Q.T
+```
+
+### 5. **Train the Matrix Factorization Model**
+
+```python
+R = user_item_matrix
+N = len(R)
+M = len(R[0])
+K = 20  # Number of latent features
+
+# Initialize user and item latent feature matrices
+P = np.random.rand(N, K)
+Q = np.random.rand(M, K)
+
+# Factorize the matrix
+nP, nQ = matrix_factorization(R, P, Q, K)
+
+# Reconstruct the full matrix
+nR = np.dot(nP, nQ.T)
+```
+
+### 6. **Evaluate the Model**
+
+After reconstructing the matrix, you can evaluate the model using metrics such as Root Mean Squared Error (RMSE).
+
+```python
+def rmse(predicted, actual):
+    predicted = predicted[actual.nonzero()].flatten()
+    actual = actual[actual.nonzero()].flatten()
+    return np.sqrt(((predicted - actual) ** 2).mean())
+
+print(f"RMSE: {rmse(nR, R)}")
+```
+
+### Explanation:
+
+- **P and Q Matrices**: `P` is the user-feature matrix and `Q` is the item-feature matrix. Each row of `P` represents a user’s preferences, and each row of `Q` represents an item’s features.
+- **Matrix Factorization**: The algorithm learns the matrices `P` and `Q` such that their dot product approximates the original user-item matrix.
+- **Stochastic Gradient Descent (SGD)**: The matrix factorization is done using SGD, iteratively updating the matrices to minimize the error between the predicted and actual ratings.
+- **Regularization**: `beta` is used to prevent overfitting by adding a penalty to large values in `P` and `Q`.
+
+### Summary
+This code demonstrates how to implement matrix factorization for the MovieLens 100K dataset using stochastic gradient descent. It’s a simple but powerful method to uncover latent features underlying the interactions between users and items, which can then be used to make recommendations.
